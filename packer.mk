@@ -8,7 +8,7 @@ NC    := \033[0m
 # ∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
 
 build-packer:
-	@packer build -var-file=settings.json vhd-image.json
+	@packer build -var-file=packer/settings.json packer/vhd-image.json
 
 init-packer:
-	@./scripts/init-variables
+	@./packer/scripts/init-variables

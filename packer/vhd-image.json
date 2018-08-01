@@ -45,32 +45,32 @@
       },
       {
         "type": "file",
-        "source": "./cleanup-vhd.sh",
+        "source": "packer/cleanup-vhd.sh",
         "destination": "/home/packer/cleanup-vhd.sh"
       },
       {
         "type": "file",
-        "source": "./install-core-packages.sh",
+        "source": "packer/install-core-packages.sh",
         "destination": "/home/packer/install-core-packages.sh"
       },
       {
         "type": "file",
-        "source": "./install-docker.sh",
+        "source": "packer/install-docker.sh",
         "destination": "/home/packer/install-docker.sh"
       },
       {
         "type": "file",
-        "source": "./install-cni.sh",
+        "source": "packer/install-cni.sh",
         "destination": "/home/packer/install-cni.sh"
       },
       {
         "type": "file",
-        "source": "./install-containerd.sh",
+        "source": "packer/install-containerd.sh",
         "destination": "/home/packer/install-containerd.sh"
       },
       {
         "type": "file",
-        "source": "./extract-kubelet.sh",
+        "source": "packer/extract-kubelet.sh",
         "destination": "/home/packer/extract-kubelet.sh"
       },
       {
