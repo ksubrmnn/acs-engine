@@ -11,7 +11,8 @@ phases:
 - phase: build_vhd
   queue: Hosted Linux Preview
   steps:
-  - script: docker run --rm \
+  - script: |
+  docker run --rm \
   -v ${PWD}:/go/src/github.com/Azure/acs-engine \
   -w /go/src/github.com/Azure/acs-engine \
   -e CLIENT_ID=${CLIENT_ID} \
