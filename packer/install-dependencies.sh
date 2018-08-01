@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /opt/azure/containers/provision.sh
-source /opt/azure/containers/provision_installs.sh
+source /home/packer/provision_installs.sh
+source /home/packer/provision_source.sh
 
 # TODO: deal with etcd versions
 ETCD_VERSION="3.2.23"
