@@ -16,7 +16,7 @@ phases:
       -v ${PWD}:/go/src/github.com/Azure/acs-engine \
       -w /go/src/github.com/Azure/acs-engine \
       -e CLIENT_ID=${CLIENT_ID} \
-      -e CLIENT_SECRET=${CLIENT_SECRET} \
+      -e CLIENT_SECRET="$(CLIENT_SECRET)" \
       -e TENANT_ID=${TENANT_ID} \
       -e SUBSCRIPTION_ID=${SUBSCRIPTION_ID} \
       -e AZURE_VM_SIZE=${AZURE_VM_SIZE} \
