@@ -12,6 +12,3 @@ build-packer:
 
 init-packer:
 	@./packer/scripts/init-variables
-
-az-login:
-	az login --service-principal -u ${CLIENT_ID} -p ${CLIENT_SECRET} --tenant ${TENANT_ID}
