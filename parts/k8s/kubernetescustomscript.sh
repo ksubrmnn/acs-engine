@@ -86,8 +86,8 @@ function holdWALinuxAgent() {
 }
 
 testOutboundConnection
-holdWALinuxAgent
 waitForCloudInit
+holdWALinuxAgent
 
 if $FULL_INSTALL_REQUIRED; then
     installEtcd
@@ -105,7 +105,10 @@ ensureRPC
 
 if [[ ! -z "${MASTER_NODE}" ]]; then
     configureEtcd
-    configAddons
+fi
+
+if [ -f $CUSTOM_SEARCH_DOMAIN_SCRIPT ]; then
+    $CUSTOM_SEARCH_DOMAIN_SCRIPT > /opt/azure/containers/setup-custom-search-domain.log 2>&1 || exit $ERR_CUSTOM_SEARCH_DOMAINS_FAIL
 fi
 
 if [[ "$CONTAINER_RUNTIME" == "docker" ]]; then
@@ -117,23 +120,25 @@ elif [[ "$CONTAINER_RUNTIME" == "clear-containers" ]]; then
 	fi
 fi
 
-ensureContainerd
+
 configureK8s
-ensureKubelet
-ensureJournal
-writeKubeConfig
 
+if [[ ! -z "${MASTER_NODE}" ]]; then
+    configAddons
+fi
 
+ensureContainerd
 
 if [[ ! -z "${MASTER_NODE}" && ! -z "${EnableEncryptionWithExternalKms}" ]]; then
     ensureKMS
 fi
 
-if [ -f $CUSTOM_SEARCH_DOMAIN_SCRIPT ]; then
-    $CUSTOM_SEARCH_DOMAIN_SCRIPT > /opt/azure/containers/setup-custom-search-domain.log 2>&1 || exit $ERR_CUSTOM_SEARCH_DOMAINS_FAIL
-fi
+ensureKubelet
+ensureJournal
+
 
 if [[ ! -z "${MASTER_NODE}" ]]; then
+    writeKubeConfig
     ensureEtcd
     ensureK8sControlPlane
 fi
