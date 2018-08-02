@@ -3,3 +3,6 @@ build-packer:
 
 init-packer:
 	@./packer/scripts/init-variables
+
+run-packer:
+	@packer version && make init-packer && make build-packer
