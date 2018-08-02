@@ -36,8 +36,6 @@ function installDocker() {
     printf "Package: docker-engine\nPin: version ${DOCKER_ENGINE_VERSION}\nPin-Priority: 550\n" > /etc/apt/preferences.d/docker.pref
     apt_get_update || exit $ERR_APT_UPDATE_TIMEOUT
     apt_get_install 20 30 120 docker-engine || exit $ERR_DOCKER_INSTALL_TIMEOUT
-    echo "ExecStartPost=/sbin/iptables -P FORWARD ACCEPT" >> /etc/systemd/system/docker.service.d/exec_start.conf
-    usermod -aG docker ${ADMINUSER}
     touch /var/log/azure/docker-install.complete
 }
 
