@@ -89,7 +89,7 @@ elif [[ "$CONTAINER_RUNTIME" == "kata-containers" ]]; then
     if grep -q vmx /proc/cpuinfo; then
         installKataContainersRuntime
     fi
-
+fi
 
 
 configureK8s
