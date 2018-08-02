@@ -21,5 +21,5 @@ phases:
       -e AZURE_VM_SIZE=${AZURE_VM_SIZE} \
       -e AZURE_RESOURCE_GROUP_NAME=${AZURE_RESOURCE_GROUP_NAME} \
       -e AZURE_LOCATION=${AZURE_LOCATION} \
-      ${DEIS_GO_DEV_IMAGE} make init-packer && make build-packer
+      ${DEIS_GO_DEV_IMAGE} packer version && make init-packer && make build-packer
     displayName: Building VHD
