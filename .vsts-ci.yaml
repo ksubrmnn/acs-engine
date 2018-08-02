@@ -23,3 +23,6 @@ phases:
       -e AZURE_LOCATION=${AZURE_LOCATION} \
       ${DEIS_GO_DEV_IMAGE} make run-packer
     displayName: Building VHD
+  - script: make info
+    displayName: Copying resource to Classic Storage Account
+
