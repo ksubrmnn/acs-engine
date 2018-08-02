@@ -1,5 +1,12 @@
 #!/bin/bash
 
+CC_SERVICE_IN_TMP=/opt/azure/containers/cc-proxy.service.in
+CC_SOCKET_IN_TMP=/opt/azure/containers/cc-proxy.socket.in
+CNI_CONFIG_DIR="/etc/cni/net.d"
+CNI_BIN_DIR="/opt/cni/bin"
+AZURE_CNI_TGZ_TMP="/tmp/azure_cni.tgz"
+CONTAINERNETWORKING_CNI_TGZ_TMP="/tmp/containernetworking_cni.tgz"
+
 function installEtcd() {
     retrycmd_get_tarball 60 10 /tmp/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz ${ETCD_DOWNLOAD_URL}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz || exit $ERR_ETCD_DOWNLOAD_TIMEOUT
     tar xzvf /tmp/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz -C /usr/bin/ --strip-components=1
@@ -76,12 +83,8 @@ function installClearContainersRuntime() {
 
 	# Install the systemd service and socket files.
 	local repo_uri="https://raw.githubusercontent.com/clearcontainers/proxy/3.0.23"
-    CC_SERVICE_IN_TMP=/tmp/cc-proxy.service.in
-    CC_SOCKET_IN_TMP=/tmp/cc-proxy.socket.in
     retrycmd_if_failure_no_stats 20 1 5 curl -fsSL "${repo_uri}/cc-proxy.service.in" > $CC_SERVICE_IN_TMP
     retrycmd_if_failure_no_stats 20 1 5 curl -fsSL "${repo_uri}/cc-proxy.socket.in" > $CC_SOCKET_IN_TMP
-    cat $CC_SERVICE_IN_TMP | sed 's#@libexecdir@#/usr/libexec#' > /etc/systemd/system/cc-proxy.service
-    cat $CC_SOCKET_IN_TMP sed 's#@localstatedir@#/var#' > /etc/systemd/system/cc-proxy.socket
 }
 
 function installNetworkPlugin() {
@@ -96,7 +99,6 @@ function installNetworkPlugin() {
 
 function installCNI() {
     mkdir -p $CNI_BIN_DIR
-    CONTAINERNETWORKING_CNI_TGZ_TMP=/tmp/containernetworking_cni.tgz
     retrycmd_get_tarball 60 5 $CONTAINERNETWORKING_CNI_TGZ_TMP ${CNI_PLUGINS_URL} || exit $ERR_CNI_DOWNLOAD_TIMEOUT
     tar -xzf $CONTAINERNETWORKING_CNI_TGZ_TMP -C $CNI_BIN_DIR
     chown -R root:root $CNI_BIN_DIR
@@ -109,12 +111,10 @@ function installCNI() {
 }
 
 function installAzureCNI() {
-    CNI_CONFIG_DIR=/etc/cni/net.d
     mkdir -p $CNI_CONFIG_DIR
     chown -R root:root $CNI_CONFIG_DIR
     chmod 755 $CNI_CONFIG_DIR
     mkdir -p $CNI_BIN_DIR
-    AZURE_CNI_TGZ_TMP=/tmp/azure_cni.tgz
     retrycmd_get_tarball 60 5 $AZURE_CNI_TGZ_TMP ${VNET_CNI_PLUGINS_URL} || exit $ERR_CNI_DOWNLOAD_TIMEOUT
     tar -xzf $AZURE_CNI_TGZ_TMP -C $CNI_BIN_DIR
     installCNI

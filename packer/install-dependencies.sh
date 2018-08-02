@@ -20,11 +20,6 @@ installKataContainersRuntime
 VNET_CNI_PLUGINS_URL="https://acs-mirror.azureedge.net/cni/azure-vnet-cni-linux-amd64-latest.tgz"
 CNI_PLUGINS_URL="https://acs-mirror.azureedge.net/cni/cni-plugins-amd64-latest.tgz"
 
-CNI_CONFIG_DIR="/etc/cni/net.d"
-CNI_BIN_DIR="/opt/cni/bin"
-AZURE_CNI_TGZ_TMP="/tmp/azure_cni.tgz"
-CONTAINERNETWORKING_CNI_TGZ_TMP="/tmp/containernetworking_cni.tgz"
-
 installAzureCNI
 installContainerd
 
