@@ -84,10 +84,16 @@ elif [[ "$CONTAINER_RUNTIME" == "clear-containers" ]]; then
 	if grep -q vmx /proc/cpuinfo; then
         ensureCCProxy
 	fi
-fi
+elif [[ "$CONTAINER_RUNTIME" == "kata-containers" ]]; then
+    # Ensure we can nest virtualization
+    if grep -q vmx /proc/cpuinfo; then
+        installKataContainersRuntime
+    fi
+
 
 
 configureK8s
+configureCNI
 
 if [[ ! -z "${MASTER_NODE}" ]]; then
     configAddons

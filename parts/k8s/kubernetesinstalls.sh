@@ -28,11 +28,6 @@ function installContainerRuntime() {
         if grep -q vmx /proc/cpuinfo; then
             installClearContainersRuntime
         fi
-    elif [[ "$CONTAINER_RUNTIME" == "kata-containers" ]]; then
-        # Ensure we can nest virtualization
-        if grep -q vmx /proc/cpuinfo; then
-            installKataContainersRuntime
-        fi
     fi
 }
 
@@ -103,11 +98,6 @@ function installCNI() {
     tar -xzf $CONTAINERNETWORKING_CNI_TGZ_TMP -C $CNI_BIN_DIR
     chown -R root:root $CNI_BIN_DIR
     chmod -R 755 $CNI_BIN_DIR
-    # Turn on br_netfilter (needed for the iptables rules to work on bridges)
-    # and permanently enable it
-    retrycmd_if_failure 30 6 10 modprobe br_netfilter || exit $ERR_MODPROBE_FAIL
-    # /etc/modules-load.d is the location used by systemd to load modules
-    echo -n "br_netfilter" > /etc/modules-load.d/br_netfilter.conf
 }
 
 function installAzureCNI() {
@@ -118,16 +108,13 @@ function installAzureCNI() {
     retrycmd_get_tarball 60 5 $AZURE_CNI_TGZ_TMP ${VNET_CNI_PLUGINS_URL} || exit $ERR_CNI_DOWNLOAD_TIMEOUT
     tar -xzf $AZURE_CNI_TGZ_TMP -C $CNI_BIN_DIR
     installCNI
-    mv $CNI_BIN_DIR/10-azure.conflist $CNI_CONFIG_DIR/
-    chmod 600 $CNI_CONFIG_DIR/10-azure.conflist
-    /sbin/ebtables -t nat --list
 }
 
 function installContainerd() {
 	CRI_CONTAINERD_VERSION="1.1.0"
 	CONTAINERD_DOWNLOAD_URL="https://storage.googleapis.com/cri-containerd-release/cri-containerd-${CRI_CONTAINERD_VERSION}.linux-amd64.tar.gz"
     CONTAINERD_TGZ_TMP=/tmp/containerd.tar.gz
-    retrycmd_get_tarball 60 5 "$CONTAINERD_TGZ_TMP" "$CONTAINERD_DOWNLOAD_URL"
+    retrycmd_get_tarball 60 5 "$CONTAINERD_TGZ_TMP" "$CONTAINERD_DOWNLOAD_URL" || exit $ERR_CONTAINERD_DOWNLOAD_TIMEOUT
 	tar -xzf "$CONTAINERD_TGZ_TMP" -C /
 	rm -f "$CONTAINERD_TGZ_TMP"
 	sed -i '/\[Service\]/a ExecStartPost=\/sbin\/iptables -P FORWARD ACCEPT' /etc/systemd/system/containerd.service
@@ -139,7 +126,8 @@ function extractHyperkube() {
     retrycmd_if_failure 100 1 30 curl -sSL -o /usr/local/bin/img "https://acs-mirror.azureedge.net/img/img-linux-amd64-v0.4.6"
     chmod +x /usr/local/bin/img
     retrycmd_if_failure 75 1 60 img pull $HYPERKUBE_URL || exit $ERR_K8S_DOWNLOAD_TIMEOUT
-    path=$(find /tmp/img -name "hyperkube")
+    img unpack -o "/home/rootfs" $HYPERKUBE_URL
+    path=$(find /home/rootfs -name "hyperkube")
 
     if [[ $OS == $COREOS_OS_NAME ]]; then
         cp "$path" "/opt/kubelet"

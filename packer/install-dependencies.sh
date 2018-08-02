@@ -15,7 +15,6 @@ DOCKER_ENGINE_VERSION="1.13.*"
 installDocker
 
 installClearContainersRuntime
-installKataContainersRuntime
 
 VNET_CNI_PLUGINS_URL="https://acs-mirror.azureedge.net/cni/azure-vnet-cni-linux-amd64-latest.tgz"
 CNI_PLUGINS_URL="https://acs-mirror.azureedge.net/cni/cni-plugins-amd64-latest.tgz"

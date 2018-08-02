@@ -159,6 +159,19 @@ EOF
     generateAggregatedAPICerts
 }
 
+function configureCNI() {
+    # Turn on br_netfilter (needed for the iptables rules to work on bridges)
+    # and permanently enable it
+    retrycmd_if_failure 30 6 10 modprobe br_netfilter || exit $ERR_MODPROBE_FAIL
+    # /etc/modules-load.d is the location used by systemd to load modules
+    echo -n "br_netfilter" > /etc/modules-load.d/br_netfilter.conf
+    if [[ "${NETWORK_PLUGIN}" = "azure" ]]; then
+        mv $CNI_BIN_DIR/10-azure.conflist $CNI_CONFIG_DIR/
+        chmod 600 $CNI_CONFIG_DIR/10-azure.conflist
+        /sbin/ebtables -t nat --list
+    fi
+}
+
 function setKubeletOpts () {
 	sed -i "s#^KUBELET_OPTS=.*#KUBELET_OPTS=${1}#" /etc/default/kubelet
 }
