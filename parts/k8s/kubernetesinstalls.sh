@@ -71,7 +71,7 @@ function installClearContainersRuntime() {
 
 	# Install Clear Containers runtime
 	echo "Installing Clear Containers runtime..."
-    apt_get_update
+    apt_get_update || exit $ERR_APT_UPDATE_TIMEOUT
     apt_get_install 20 30 120 cc-runtime
 
 	# Install the systemd service and socket files.
