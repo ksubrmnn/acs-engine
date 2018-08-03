@@ -24,6 +24,8 @@ phases:
       ${DEIS_GO_DEV_IMAGE} make run-packer
     displayName: Building VHD
   - script: |
+      OS_DISK_SAS="$(cat packer-output | grep OSDiskUriReadOnlySas: | cut -d " " -f 3)" && \
+      VHD_NAME="$(echo $OS_DISK_SAS | cut -d "/" -f 8 | cut -d "?" -f 1)" && \
       docker run --rm \
       -v ${PWD}:/go/src/github.com/Azure/acs-engine \
       -w /go/src/github.com/Azure/acs-engine \
@@ -33,6 +35,10 @@ phases:
       -e AZURE_VM_SIZE=${AZURE_VM_SIZE} \
       -e AZURE_RESOURCE_GROUP_NAME=${AZURE_RESOURCE_GROUP_NAME} \
       -e AZURE_LOCATION=${AZURE_LOCATION} \
+      -e CLASSIC_BLOB=${CLASSIC_BLOB} \
+      -e SAS_TOKEN="$(SAS_TOKEN)" \
+      -e {OS_DISK_SAS}=${OS_DISK_SAS} \
+      -e {VHD_NAME}=${VHD_NAME}
       ${DEIS_GO_DEV_IMAGE} make az-copy
     displayName: Copying resource to Classic Storage Account
 
