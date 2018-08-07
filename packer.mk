@@ -11,4 +11,4 @@ run-packer:
 	@packer version && make az-login && make init-packer && make build-packer | tee packer-output
 
 az-copy:
-	@make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
+	echo ${OS_DISK_SAS} && make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
