@@ -11,4 +11,4 @@ run-packer:
 	@packer version && make az-login && make init-packer && (make build-packer | tee packer-output)
 
 az-copy:
-	cat packer-output && make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
+	(cat packer-output | grep OSDiskUriReadOnlySas: | cut -d " " -f 3) && make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
