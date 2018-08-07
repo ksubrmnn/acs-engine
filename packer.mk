@@ -8,7 +8,7 @@ az-login:
 	az login --service-principal -u ${CLIENT_ID} -p ${CLIENT_SECRET} --tenant ${TENANT_ID}
 
 run-packer:
-	@packer version && make az-login && make init-packer && make build-packer | tee packer-output
+	@packer version && make az-login && make init-packer && (make build-packer | tee packer-output)
 
 az-copy:
-	echo ${OS_DISK_SAS} && make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
+	cat packer-output && make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${SAS_TOKEN}"
