@@ -1,5 +1,4 @@
-# trigger:
-# - master
+trigger: none
 
 # steps: 
 # - create an VHD in Packer to normal storage account
