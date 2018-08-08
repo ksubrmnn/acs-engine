@@ -11,7 +11,7 @@ run-packer:
 	@packer version && make az-login && make init-packer && (make build-packer | tee packer-output)
 
 az-copy:
-	make az-login && azcopy --source ${OS_DISK_SAS} --destination ${CLASSIC_BLOB}/${VHD_NAME} --dest-sas "${CLASSIC_SAS_TOKEN}"
+	@make az-login && (azcopy --source "${OS_DISK_SAS}" --destination "${CLASSIC_BLOB}/${VHD_NAME}" --dest-sas "${CLASSIC_SAS_TOKEN}")
 
 generate-sas:
-	make az-login && VHD_SAS="$(az storage container generate-sas --name vhds --permissions lr --connection-string "${CLASSIC_SA_CONNECTION_STRING}" --start ${START_DATE} --expiry ${EXPIRY_DATE})"
+	@make az-login && (az storage container generate-sas --name vhds --permissions lr --connection-string "${CLASSIC_SA_CONNECTION_STRING}" --start ${START_DATE} --expiry ${EXPIRY_DATE} | tee vhd-sas)
